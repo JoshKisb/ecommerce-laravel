@@ -15,6 +15,8 @@ same way.
    file at the same path, and anything the theme does not ship falls back to the core.
 
 A theme is chosen per request, so two channels on one deployment can look completely different.
+The initial channel takes its theme from `STOREFRONT_THEME` (`config('ecommerce.storefront_theme')`)
+when the database is first migrated; after that, `channels.theme` is the source of truth.
 An unknown theme name falls back to the core views and logs a warning.
 
 ## Layout of a theme
