@@ -3,6 +3,8 @@
 namespace Tests\Feature;
 
 use App\Mail\ContactMessage;
+use App\Models\Channel;
+use App\Models\ContactRequest;
 use App\Models\Store;
 use App\Settings\GeneralSettings;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -107,6 +109,33 @@ class ContactFormTest extends TestCase
         // Silently: the bot gets the same success it would get on a real send, so it
         // learns nothing about why. But no mail leaves.
         Mail::assertNothingSent();
+        $this->assertDatabaseCount('contact_requests', 0);
+    }
+
+    #[Test]
+    public function a_message_is_kept_in_the_stores_inbox(): void
+    {
+        Mail::fake();
+
+        $this->post(route('contact.send'), $this->validPayload());
+
+        $kept = ContactRequest::query()->withoutGlobalScopes()->sole();
+        $this->assertSame(['Ada Lovelace', 'ada@example.test', 'Where is order 1043?'], [$kept->name, $kept->email, $kept->subject]);
+        $store = Channel::query()->sole()->store;
+        $this->assertSame([$store->id, $store->team_id], [$kept->store_id, $kept->team_id]);
+        $this->assertNull($kept->read_at);
+    }
+
+    #[Test]
+    public function a_mail_failure_still_keeps_the_message_and_thanks_the_sender(): void
+    {
+        Mail::shouldReceive('to')->andThrow(new \RuntimeException('Connection could not be established with host smtp'));
+
+        $this->post(route('contact.send'), $this->validPayload())
+            ->assertRedirect(route('contact'))
+            ->assertSessionHas('success');
+
+        $this->assertSame(1, ContactRequest::query()->withoutGlobalScopes()->count());
     }
 
     #[Test]
