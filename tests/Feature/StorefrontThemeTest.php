@@ -37,6 +37,8 @@ class StorefrontThemeTest extends TestCase
 
     public function test_the_default_theme_renders_the_core_views(): void
     {
+        $this->useTheme(null);
+
         $this->get(route('products.show', $this->tee))
             ->assertOk()
             ->assertSee('name="variant_id"', false)
