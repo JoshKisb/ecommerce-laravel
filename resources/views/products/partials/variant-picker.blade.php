@@ -50,10 +50,11 @@
                                name="variant_choice[{{ $loop->parent->index }}]"
                                value="{{ $value }}"
                                x-model="selected[@js($attribute['name'])]">
-                        <span class="inline-flex min-h-11 min-w-11 items-center justify-center rounded-md border border-stroke px-4 py-2 text-label
-                                     peer-checked:border-primary-700 peer-checked:bg-primary-50 peer-checked:text-primary-800
-                                     peer-focus-visible:ring-2 peer-focus-visible:ring-primary-600"
+                        <span class="inline-flex min-h-11 min-w-11 items-center justify-center gap-1.5 rounded-md border border-stroke px-4 py-2 text-label
+                                     peer-checked:border-primary-700 peer-checked:bg-primary-700 peer-checked:font-semibold peer-checked:text-white
+                                     peer-focus-visible:ring-2 peer-focus-visible:ring-primary-600 peer-focus-visible:ring-offset-2"
                               :class="offered(@js($attribute['name']), @js($value)) ? 'text-ink' : 'text-muted line-through'">
+                            <i class="fa-solid fa-check text-xs" aria-hidden="true" x-show="selected[@js($attribute['name'])] === @js($value)"></i>
                             {{ $value }}
                         </span>
                         <span class="sr-only" x-show="! offered(@js($attribute['name']), @js($value))">(unavailable with this selection)</span>

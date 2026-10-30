@@ -178,8 +178,12 @@
                                     </legend>
                                     <div class="mt-2 flex flex-col gap-2">
                                         @foreach ($group->choices as $choice)
-                                            <label class="inline-flex items-center gap-2 @unless ($choice->is_available) text-muted @endunless">
-                                                <input type="{{ $group->allowsOne() ? 'radio' : 'checkbox' }}"
+                                            <label class="flex min-h-11 cursor-pointer items-center gap-3 rounded-md border border-stroke px-3 py-2
+                                                          has-checked:border-primary-700 has-checked:bg-primary-50 has-checked:font-medium
+                                                          has-focus-visible:ring-2 has-focus-visible:ring-primary-600
+                                                          @unless ($choice->is_available) cursor-not-allowed text-muted @endunless">
+                                                <input class="accent-primary-700"
+                                                       type="{{ $group->allowsOne() ? 'radio' : 'checkbox' }}"
                                                        name="options[]"
                                                        value="{{ $choice->id }}"
                                                        @if ($group->allowsOne() && $group->isRequired()) required @endif
