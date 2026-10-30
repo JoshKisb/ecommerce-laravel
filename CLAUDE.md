@@ -114,6 +114,10 @@ the `Order::STATUS_*` constants are the vocabulary. Never assign `status` direct
 `ExecutionDeadline`. Cart mutations mirror the REST cart controller's stock guard and `user_id`
 scoping.
 
+**Storefront presentation is themeable per channel.** `channels.theme` selects `themes/<name>/`,
+whose views override the core's by path; `ProductPresenter` hands views prices and stock already
+decided. See [`docs/THEMES.md`](./docs/THEMES.md).
+
 **Modules live in their own repositories** and are registered by `liberusoftware/module-manager`.
 `modules/` in this host holds the manager only.
 
@@ -125,6 +129,7 @@ scoping.
 | [`docs/CONFORMANCE.md`](./docs/CONFORMANCE.md) | A dated snapshot of the gap between this repo and the reference design. Not edited |
 | [`docs/MIGRATION_PLAN.md`](./docs/MIGRATION_PLAN.md) | Living. Sequences the structural work and records each wave as it lands |
 | [`docs/MODULE_DEVELOPMENT.md`](./docs/MODULE_DEVELOPMENT.md) | Package, repository and namespace naming; the dependency rules |
+| [`docs/THEMES.md`](./docs/THEMES.md) | Storefront themes: per-channel view overrides, tokens, the presentation contract |
 | [`docs/adr/`](./docs/adr/) | One decision per file |
 | [`docs/agents/`](./docs/agents/) | Issue tracker, triage labels, domain docs |
 

@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Models\Permission;
 use App\Models\Role;
 use App\Models\Store;
+use App\Support\StorefrontTheme;
 use BezhanSalleh\FilamentShield\Facades\FilamentShield;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
@@ -14,6 +15,11 @@ use Spatie\Permission\PermissionRegistrar;
 
 class AppServiceProvider extends ServiceProvider
 {
+    public function register(): void
+    {
+        $this->app->singleton(StorefrontTheme::class, fn ($app) => new StorefrontTheme($app['view']->getFinder(), base_path('themes')));
+    }
+
     public function boot(): void
     {
         // Platform permissions are named `{affix}_{subject}`, compound models with `::`
