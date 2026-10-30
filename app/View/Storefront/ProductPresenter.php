@@ -57,6 +57,7 @@ class ProductPresenter
             'id' => $variant->id,
             'values' => array_column($variant->attribute_values, 'value', 'name'),
             'label' => $variant->label(),
+            'amount' => round($this->tax->displayAmount($product, $variant->sellingPrice()), 2),
             'price' => Money::format($this->tax->displayAmount($product, $variant->sellingPrice())),
             'available' => $variant->isPurchasable(),
             'stock' => $variant->tracksInventory() ? $variant->inventory_count : null,

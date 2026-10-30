@@ -91,7 +91,7 @@ Views that show commerce data get it already priced and judged from
 | Method | Gives you |
 | --- | --- |
 | `card($product)` | `url`, `add_url`, `name`, `image`, `summary`, `price`, `from_price`, `was_price`, `stock`, `stock_state` (`in`/`low`/`out`), `rating`, `review_count`, `requires_choice` |
-| `variantPicker($product, old('variant_id'))` | `attributes`, `variants` (`id`, `values`, `label`, display `price` with tax, `available`, `stock`, `sku`), `selected` |
+| `variantPicker($product, old('variant_id'))` | `attributes`, `variants` (`id`, `values`, `label`, display `price` with tax and its numeric `amount`, `available`, `stock`, `sku`), `selected` |
 | `defaultChoiceIds($product)` | option choices selected by default |
 
 Forms post to the core routes with the core field names. The server reads these and nothing
@@ -104,6 +104,8 @@ else, and it re-prices and re-checks stock whatever the page showed:
 
 The core variant picker dispatches a `variant-changed` browser event with the chosen variant,
 which the core add-to-cart form uses to enable its button. A theme's picker should do the same.
+Each option input carries `data-price-adjustment`, so a theme can show a running total. The total
+is only a guide: the server prices the line.
 
 ## What does not belong in a theme
 

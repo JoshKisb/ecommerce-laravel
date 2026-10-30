@@ -88,6 +88,13 @@ class StorefrontThemeTest extends TestCase
         }
     }
 
+    public function test_the_contract_gives_themes_numbers_to_total_with(): void
+    {
+        $variants = app(ProductPresenter::class)->variantPicker($this->tee->fresh())['variants'];
+
+        $this->assertSame([20.0, 22.0], array_column($variants, 'amount'));
+    }
+
     public function test_assets_come_from_the_nearest_theme_that_declares_them(): void
     {
         $theme = app(StorefrontTheme::class);

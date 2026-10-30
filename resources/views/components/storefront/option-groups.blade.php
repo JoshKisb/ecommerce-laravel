@@ -22,6 +22,7 @@
                               has-focus-visible:ring-2 has-focus-visible:ring-primary-600
                               @unless ($choice->is_available) cursor-not-allowed text-muted @endunless">
                     <input class="accent-primary-700"
+                       data-price-adjustment="{{ (float) $choice->price_adjustment }}"
                            type="{{ $group->allowsOne() ? 'radio' : 'checkbox' }}"
                            name="options[]"
                            value="{{ $choice->id }}"
