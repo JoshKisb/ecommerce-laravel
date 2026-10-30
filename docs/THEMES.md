@@ -85,6 +85,8 @@ stylesheet imports the core one and redefines the tokens it changes:
 
 Every `assets` entry is added to the Vite build automatically, and the storefront layouts load
 the active theme's entries via `StorefrontTheme::entries()`.
+A layout a theme overrides must do the same, `@vite(app(\App\Support\StorefrontTheme::class)->entries())`;
+a copied `@vite(['resources/css/app.css', …])` loads the core's stylesheet instead of the theme's.
 
 ## The presentation contract
 
