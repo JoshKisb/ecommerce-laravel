@@ -12,12 +12,14 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Password;
 use Spatie\Permission\PermissionRegistrar;
+use Stripe\StripeClient;
 
 class AppServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
         $this->app->singleton(StorefrontTheme::class, fn ($app) => new StorefrontTheme($app['view']->getFinder(), base_path('themes')));
+        $this->app->bind(StripeClient::class, fn () => new StripeClient(config('services.stripe.secret')));
     }
 
     public function boot(): void
