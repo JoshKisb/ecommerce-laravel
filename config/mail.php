@@ -112,6 +112,10 @@ return [
         'name' => env('MAIL_FROM_NAME', 'Ecommerce Invoices'),
     ],
 
+    // Where the contact form delivers. Empty: the store's public email.
+    'contact_to' => env('MAIL_CONTACT_TO'),
+
+
     /*
     |--------------------------------------------------------------------------
     | Markdown Mail Settings

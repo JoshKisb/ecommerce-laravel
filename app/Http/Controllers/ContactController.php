@@ -40,7 +40,8 @@ class ContactController extends Controller
         ]);
 
         // The store's own inbox; the platform's only when the merchant has not set one.
-        Mail::to(Store::current()?->email ?: $settings->site_email)->send(new ContactMessage(
+        // MAIL_CONTACT_TO keeps the form's inbox apart from the address the shop publishes.
+        Mail::to(config('mail.contact_to') ?: Store::current()?->email ?: $settings->site_email)->send(new ContactMessage(
             senderName: $validated['name'],
             senderEmail: $validated['email'],
             contactSubject: ($validated['subject'] ?? null) ?: 'No subject',
@@ -52,6 +53,6 @@ class ContactController extends Controller
 
     private function confirmation(): string
     {
-        return 'Thanks — your message is on its way. We usually reply within one working day.';
+        return 'Thanks — your message is on its way.';
     }
 }

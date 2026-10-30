@@ -150,4 +150,25 @@ class ContactFormTest extends TestCase
         $response->assertDontSee('Knowledgebase');   // the SaaS template copy is gone
         $response->assertDontSee('Developer APIs');
     }
+
+    #[Test]
+    public function a_configured_contact_inbox_receives_the_form_instead_of_the_public_address(): void
+    {
+        Mail::fake();
+        config(['mail.contact_to' => 'inbox@example.test']);
+
+        $this->post(route('contact.send'), $this->validPayload())->assertSessionHas('success');
+
+        Mail::assertSent(ContactMessage::class, fn (ContactMessage $mail) => $mail->hasTo('inbox@example.test') && ! $mail->hasTo('merchant@example.test'));
+    }
+
+    #[Test]
+    public function nothing_promises_a_response_time(): void
+    {
+        Mail::fake();
+
+        $this->get(route('contact'))->assertDontSee('working day');
+        $this->post(route('contact.send'), $this->validPayload())
+            ->assertSessionHas('success', fn (string $message) => ! str_contains($message, 'working day'));
+    }
 }
