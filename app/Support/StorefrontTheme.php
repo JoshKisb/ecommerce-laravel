@@ -23,6 +23,9 @@ class StorefrontTheme
     /** @var list<string> most specific first */
     private array $chain = [];
 
+    /** @var array<string, list<string>> vendor namespace => theme directories this request added */
+    private array $vendorPaths = [];
+
     public function __construct(
         private readonly FileViewFinder $finder,
         private readonly string $root,
@@ -39,7 +42,26 @@ class StorefrontTheme
         );
 
         $this->finder->setPaths([...$themePaths, ...$this->corePaths]);
+        $this->applyVendorOverrides();
         $this->finder->flush();
+    }
+
+    /** themes/<name>/resources/views/vendor/<namespace>/ overrides `<namespace>::` views, as resources/views/vendor does. */
+    private function applyVendorOverrides(): void
+    {
+        $hints = $this->finder->getHints();
+
+        foreach ($this->vendorPaths as $namespace => $dirs) {
+            $this->finder->replaceNamespace($namespace, array_values(array_diff($hints[$namespace] ?? [], $dirs)));
+        }
+        $this->vendorPaths = [];
+
+        foreach (array_reverse($this->chain) as $theme) {
+            foreach (glob("{$this->root}/{$theme}/resources/views/vendor/*", GLOB_ONLYDIR) ?: [] as $dir) {
+                $this->finder->prependNamespace(basename($dir), $dir);
+                $this->vendorPaths[basename($dir)][] = $dir;
+            }
+        }
     }
 
     public function name(): string

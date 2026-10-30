@@ -62,6 +62,7 @@ Names are lowercase letters, digits and hyphens. **Do not add a `composer.json`.
 | How variants are chosen | `components/storefront/variant-picker.blade.php` |
 | How product options are chosen | `components/storefront/option-groups.blade.php` |
 | Cart | `livewire/shopping-cart.blade.php`, `cart/*.blade.php` |
+| Pagination, mail and other package views | `vendor/<namespace>/…`, e.g. `vendor/pagination/tailwind.blade.php` |
 | Colours, typography, radii | `resources/css/app.css` (tokens) |
 
 Override only what differs. Each file you copy is one you keep in step with the core.

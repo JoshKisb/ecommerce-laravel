@@ -97,6 +97,18 @@ class StorefrontThemeTest extends TestCase
         $this->assertSame([20.0, 22.0], array_column($variants, 'amount'));
     }
 
+    public function test_a_theme_overrides_vendor_views_and_the_next_request_does_not_keep_them(): void
+    {
+        $theme = app(StorefrontTheme::class);
+        $finder = app('view')->getFinder();
+
+        $theme->apply('acme');
+        $this->assertSame(base_path('tests/Fixtures/themes/acme/resources/views/vendor/pagination/tailwind.blade.php'), $finder->find('pagination::tailwind'));
+
+        $theme->apply(null);
+        $this->assertStringNotContainsString('Fixtures/themes', $finder->find('pagination::tailwind'));
+    }
+
     public function test_assets_come_from_the_nearest_theme_that_declares_them(): void
     {
         $theme = app(StorefrontTheme::class);
