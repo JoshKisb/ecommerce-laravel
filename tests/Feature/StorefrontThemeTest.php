@@ -106,6 +106,16 @@ class StorefrontThemeTest extends TestCase
             ->assertSee(Channel::query()->sole()->store->name);
     }
 
+    public function test_the_storefront_names_the_merchant_not_the_platform(): void
+    {
+        config(['app.name' => 'Liberu Platform']);
+        Channel::query()->sole()->store->update(['name' => 'Corner Phones']);
+
+        foreach ([route('home'), route('products.index'), route('login')] as $url) {
+            $this->get($url)->assertOk()->assertSee('Corner Phones')->assertDontSee('Liberu Platform');
+        }
+    }
+
     public function test_a_theme_overrides_vendor_views_and_the_next_request_does_not_keep_them(): void
     {
         $theme = app(StorefrontTheme::class);
