@@ -23,6 +23,7 @@ use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Callout;
@@ -472,7 +473,22 @@ final class ProductForm
                     ->label('List on Facebook')
                     ->helperText('Pushes this product into your Meta Catalog.')
                     ->visible(fn (?Product $record) => FacebookConnection::forTeam($record?->team_id ?? Filament::getTenant()?->getKey()) !== null),
+                TextEntry::make('facebook_status')
+                    ->label('Catalog status')
+                    ->state(fn (?Product $record) => self::facebookStatus($record))
+                    ->visible(fn (?Product $record) => $record?->facebookListings()->exists() ?? false),
             ]);
+    }
+
+    /** Each Catalog item's status, with Meta's first rejection reason. */
+    public static function facebookStatus(?Product $record): array
+    {
+        return $record?->facebookListings()->with('variant')->get()->map(function ($listing) {
+            $label = $listing->product_variant_id ? ($listing->variant?->label() ?: 'Removed variant') : 'Product';
+            $error = $listing->errors[0]['message'] ?? $listing->errors['message'] ?? null;
+
+            return $label.': '.str_replace('_', ' ', $listing->status).($error ? ' — '.$error : '');
+        })->all() ?? [];
     }
 
     private static function organisation(): Section
