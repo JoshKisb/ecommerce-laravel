@@ -128,6 +128,12 @@ PRINTFUL_API_TOKEN=xxx
 PRINTFUL_STORE_ID=          # only for an account-level token
 ```
 
+`php artisan printful:import-products` imports the Printful store's sync products as made-to-order
+products, one variant per Printful sync variant (Colour and Size), priced at Printful's retail price,
+with its mockups in the gallery. Re-running it updates in place. `--product=<id>` imports one product,
+and `--onto=<local id>` maps it onto an existing product, matching variants by their options. The
+command is not scheduled by the core; a site that wants its catalogue kept in step schedules it.
+
 ---
 
 ## Where configuration lives
