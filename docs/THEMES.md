@@ -97,6 +97,9 @@ a copied `@vite(['resources/css/app.css', …])` loads the core's stylesheet ins
 Views that show commerce data get it already priced and judged from
 `App\View\Storefront\ProductPresenter`. Use it; do not recompute it in a theme.
 
+Every view also receives `$currentStore` (the channel's `Store`, or null) and `$storeName`. Name
+the merchant with these, not `config('app.name')`, which is the platform's name.
+
 | Method | Gives you |
 | --- | --- |
 | `card($product)` | `url`, `add_url`, `name`, `image`, `summary`, `price`, `from_price`, `was_price`, `stock`, `stock_state` (`in`/`low`/`out`), `rating`, `review_count`, `requires_choice` |

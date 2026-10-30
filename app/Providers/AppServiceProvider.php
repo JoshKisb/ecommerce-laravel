@@ -30,7 +30,8 @@ class AppServiceProvider extends ServiceProvider
             fn (string $affix, string $subject): string => Str::snake($affix).'_'.str_replace('_', '::', Str::snake($subject)),
         );
 
-        View::composer(['layouts.app', 'components.home-navbar', 'contact', 'categories.*'], function ($view) {
+        // Every view, so a theme can name the store wherever it overrides one.
+        View::composer('*', function ($view) {
             $store = Store::current();
             $view->with('currentStore', $store)->with('storeName', $store?->name ?? config('app.name'));
         });

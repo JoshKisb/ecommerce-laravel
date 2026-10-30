@@ -97,6 +97,15 @@ class StorefrontThemeTest extends TestCase
         $this->assertSame([20.0, 22.0], array_column($variants, 'amount'));
     }
 
+    public function test_any_view_a_theme_overrides_can_name_the_store(): void
+    {
+        $this->useTheme('acme');
+
+        $this->get(route('products.search'))->assertOk()
+            ->assertSee('data-acme-search', false)
+            ->assertSee(Channel::query()->sole()->store->name);
+    }
+
     public function test_a_theme_overrides_vendor_views_and_the_next_request_does_not_keep_them(): void
     {
         $theme = app(StorefrontTheme::class);
