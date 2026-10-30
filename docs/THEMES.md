@@ -83,6 +83,10 @@ stylesheet imports the core one and redefines the tokens it changes:
 }
 ```
 
+Shared views colour state with the semantic scales `success`, `warning` and `danger`, never a stock
+Tailwind hue. `success` aliases `primary` in the core, so a theme whose brand is not green
+redefines `--color-success-*` as well.
+
 Every `assets` entry is added to the Vite build automatically, and the storefront layouts load
 the active theme's entries via `StorefrontTheme::entries()`.
 A layout a theme overrides must do the same, `@vite(app(\App\Support\StorefrontTheme::class)->entries())`;
