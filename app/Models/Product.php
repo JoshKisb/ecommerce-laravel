@@ -285,7 +285,7 @@ class Product extends Model implements Orderable
                     ['product_id' => $product->id],
                     [
                         'file_url' => $product->downloadable_file,
-                        'download_limit' => $product->download_limit ?? PHP_INT_MAX,
+                        'download_limit' => $product->download_limit,
                         'expiration_time' => $product->expiration_time,
                     ]
                 );
