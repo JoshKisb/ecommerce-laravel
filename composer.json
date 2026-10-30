@@ -42,7 +42,7 @@
         "laravel/sail": "^1.69.0",
         "mockery/mockery": "^1.6.15",
         "nunomaduro/collision": "^8.9.5",
-        "phpunit/phpunit": "^13.4.3",
+        "phpunit/phpunit": "^13.4.4",
         "rector/rector": "^2.8.1",
         "spatie/laravel-ignition": "^2.12.1"
     },
@@ -106,6 +106,11 @@
         },
         "platform": {
             "ext-posix": "1.0.0"
+        },
+        "audit": {
+            "ignore-abandoned": {
+                "symplify/rule-doc-generator-contracts": "Dev-only interfaces required by driftingly/rector-laravel ^2.7 (latest 2.7.3 still requires ^11.2); no runtime code. Remove when rector-laravel drops it."
+            }
         }
     },
     "minimum-stability": "stable",
