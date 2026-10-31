@@ -85,6 +85,21 @@ class PrintfulCatalogImportTest extends TestCase
         $this->assertSame('501', $this->variantOf($mine, 'Black / M')->supplier_variant_id);
     }
 
+    public function test_names_without_the_product_still_give_colour_and_size_and_rules_file_the_product(): void
+    {
+        config(['dropshipping.suppliers.printful.categories' => [
+            'Headwear' => ['keywords' => ['cap', 'beanie']],
+            'Apparel' => ['keywords' => ['hoodie', 'tee'], 'description' => 'Layers and staples.'],
+        ]]);
+        $this->variants = [['id' => 601, 'name' => 'Black / M', 'sku' => 'H-B-M', 'retail_price' => '40.00']];
+
+        $this->artisan('printful:import-products')->assertSuccessful();
+
+        $hoodie = Product::sole();
+        $this->assertSame('Black / M', $hoodie->variants()->sole()->label());
+        $this->assertSame(['Apparel', 'Layers and staples.'], [$hoodie->category->name, $hoodie->category->description]);
+    }
+
     public function test_without_a_token_the_import_does_nothing(): void
     {
         config(['dropshipping.suppliers.printful.auth.key' => 'Bearer ']);

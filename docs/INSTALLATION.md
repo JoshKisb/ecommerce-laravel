@@ -134,6 +134,10 @@ with its mockups in the gallery. Re-running it updates in place. `--product=<id>
 and `--onto=<local id>` maps it onto an existing product, matching variants by their options. The
 command is not scheduled by the core; a site that wants its catalogue kept in step schedules it.
 
+Imports are uncategorised unless `dropshipping.suppliers.printful.categories` maps category names to
+keywords, for example `'Headwear' => ['keywords' => ['cap', 'beanie']]`; the first category whose
+keywords appear in the product or variant names is used, and `'default' => true` catches the rest.
+
 ---
 
 ## Where configuration lives

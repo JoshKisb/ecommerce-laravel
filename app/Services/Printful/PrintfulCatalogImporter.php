@@ -3,6 +3,7 @@
 namespace App\Services\Printful;
 
 use App\Models\Product;
+use App\Models\ProductCategory;
 use App\Models\ProductVariant;
 use App\Services\ProductVariantService;
 use Illuminate\Http\Client\PendingRequest;
@@ -94,26 +95,37 @@ class PrintfulCatalogImporter
         $product->featured_image = $product->featured_image ?: ($syncProduct['thumbnail_url'] ?? null);
         $product->save();
 
-        $this->syncVariants($product, $variants);
+        $this->syncVariants($product, $variants, $name);
         $this->syncGallery($product, $variants);
 
         return $product->fresh();
     }
 
-    /** A theme or site may file imported products; the core leaves them uncategorised. */
+    /**
+     * The first category in `dropshipping.suppliers.printful.categories` whose keywords appear in the
+     * product's or its variants' names. Without rules, imports are left uncategorised.
+     */
     protected function categoryFor(string $name, array $variants): ?int
     {
+        $text = Str::lower($name.' '.collect($variants)->pluck('name')->implode(' '));
+
+        foreach ($this->supplier['categories'] ?? [] as $category => $rule) {
+            if (Str::contains($text, array_map('strtolower', $rule['keywords'] ?? [])) || ($rule['default'] ?? false)) {
+                return ProductCategory::firstOrCreate(['slug' => Str::slug($category)], ['name' => $category, 'description' => $rule['description'] ?? null])->id;
+            }
+        }
+
         return null;
     }
 
     /** @param  Collection<int, array>  $variants */
-    private function syncVariants(Product $product, Collection $variants): void
+    private function syncVariants(Product $product, Collection $variants, string $syncName): void
     {
         if ($variants->isEmpty()) {
             return;
         }
 
-        $parsed = $variants->map(fn (array $v) => ['variant' => $v] + $this->options($v));
+        $parsed = $variants->map(fn (array $v) => ['variant' => $v] + $this->options($v, $syncName));
         $axes = collect(['Colour' => 'colour', 'Size' => 'size'])->filter(fn ($key) => $parsed->pluck($key)->filter()->isNotEmpty());
         if ($axes->isEmpty()) {
             $axes = collect(['Style' => 'name']);
@@ -166,7 +178,7 @@ class PrintfulCatalogImporter
     }
 
     /** @return array{colour: ?string, size: ?string} from Printful's fields, its named options, or the variant's name */
-    private function options(array $variant): array
+    private function options(array $variant, string $productName): array
     {
         if (filled($variant['color'] ?? null) || filled($variant['size'] ?? null)) {
             return ['colour' => ($variant['color'] ?? null) ?: null, 'size' => ($variant['size'] ?? null) ?: null];
@@ -177,9 +189,11 @@ class PrintfulCatalogImporter
         $size = $options->first(fn ($value, $key) => Str::contains($key, 'size'));
 
         if (! $colour && ! $size) {
-            // "Unisex Tee / Black / M": the product name, then colour, then size.
+            // "Unisex Tee / Black / M" or "Black / M": a leading product name is dropped, then colour and size.
             $parts = array_map('trim', explode('/', (string) ($variant['name'] ?? '')));
-            array_shift($parts);
+            if (count($parts) > 1 && Str::startsWith(Str::lower($productName), Str::lower($parts[0]))) {
+                array_shift($parts);
+            }
             [$colour, $size] = match (count($parts)) {
                 0 => [null, null],
                 1 => [null, $parts[0]],
