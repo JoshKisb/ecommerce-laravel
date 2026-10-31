@@ -107,6 +107,11 @@ paths drifting apart is the failure that class exists to prevent.
 implementing `App\Interfaces\PaymentGatewayInterface`. Stripe and PayPal each have a webhook
 controller.
 
+**A product names its supplier.** `products.supplier_id` (e.g. `printful`) sends an order's lines
+for that product to the supplier through `CheckoutService::supplierFor()` and
+`DispatchDropshippingOrder`, each line by its variant's `supplier_variant_id` or SKU, whatever the
+request names. `PrintfulCatalogImporter` mirrors a Printful store as products.
+
 **Order state is a transition, not an assignment.** `Order::transitionTo()` writes the history row;
 the `Order::STATUS_*` constants are the vocabulary. Never assign `status` directly.
 
